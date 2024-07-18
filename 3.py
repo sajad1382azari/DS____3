@@ -86,4 +86,49 @@ class GeneticAlgorithm:
             return create_random_tree()
         else:
             return individual
+    def evolve(self, X, y):
+        for generation in range(self.n_generations):
+            selected_individuals = self.selection()
+            next_population = []
+            while len(next_population) < self.population_size:
+                parent1, parent2 = random.sample(selected_individuals, 2)
+                offspring = self.crossover(parent1, parent2)
+                offspring = self.mutate(offspring)
+                next_population.append(offspring)
+            self.population = next_population
+            fitness_scores = [self.fitness_function(ind, x_train, y_train) for ind in self.population]
+            print(f'Generation {generation + 1}: Best Fitness = {min(fitness_scores)}')
+
+    def predict(self, X):
+        best_individual = min(self.population, key=lambda ind: self.fitness_function(ind, x_train, y_train))
+        return evaluate_tree(best_individual, X)
+
+population_size = 50
+n_generations = 50
+
+mutation_rate = 0.1
+
+ga = GeneticAlgorithm(population_size, n_generations, mutation_rate)
+ga.evolve(x_train, y_train)
+
+y_pred = ga.predict(x_test)
+accuracy = np.mean(np.argmax(y_pred, axis=1) == np.argmax(y_test, axis=1))
+print(f'Test Accuracy: {accuracy * 100:.2f}%')
+
+def read_input_file(filename):
+    with open(filename, 'r') as file:
+        images = [list(map(float, line.strip().split())) for line in file]
+    return np.array(images)
+
+def write_output_file(filename, results):
+    with open(filename, 'w') as file:
+        for result in results:
+            file.write(f'{result}\n')
+
+input_file = '/content/input.txt'
+output_file = 'output.txt'
+input_images = read_input_file(input_file)
+predictions = ga.predict(input_images)
+write_output_file(output_file, np.argmax(predictions, axis=1))
+
 
