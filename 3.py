@@ -44,3 +44,46 @@ def tree_to_function(tree, X):
         return np.max(tree_to_function(tree[1], X))
     elif tree[0] == 'min':
         return np.min(tree_to_function(tree[1], X))
+
+def softmax(logits):
+    exp_logits = np.exp(logits)
+    return exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
+
+def evaluate_tree(tree, X):
+    logits = np.zeros((X.shape[0], 10))
+    for i in range(10):
+        logits[:, i] = tree_to_function(tree, X)
+    return softmax(logits)
+
+class GeneticAlgorithm:
+    def __init__(self, population_size, n_generations, mutation_rate):
+        self.population_size = population_size
+        self.n_generations = n_generations
+        self.mutation_rate = mutation_rate
+        self.population = self.initialize_population()
+
+    def initialize_population(self):
+        return [create_random_tree() for _ in range(self.population_size)]
+
+    def fitness_function(self, individual, X, y):
+        logits = evaluate_tree(individual, X)
+        loss = -np.mean(np.sum(y * np.log(logits), axis=1))
+        return loss
+
+    def selection(self):
+        fitness_scores = [self.fitness_function(ind, x_train, y_train) for ind in self.population]
+        sorted_population = [ind for _, ind in sorted(zip(fitness_scores, self.population))]
+        return sorted_population[:self.population_size // 2]
+
+    def crossover(self, parent1, parent2):
+        if random.random() > 0.5:
+            return parent1
+        else:
+            return parent2
+
+    def mutate(self, individual):
+        if random.random() < self.mutation_rate:
+            return create_random_tree()
+        else:
+            return individual
+
