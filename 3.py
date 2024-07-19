@@ -15,3 +15,16 @@ x_test = x_test.reshape(-1, 28*28).astype(np.float32) / 255.0
 encoder = OneHotEncoder(sparse=False) 
 y_train = encoder.fit_transform(y_train.reshape(-1, 1)) 
 y_test = encoder.transform(y_test.reshape(-1, 1)) 
+
+
+operations = ['+', '-', '*', 'mean', 'max', 'min'] 
+def create_random_tree(depth=3): 
+    if depth == 0 or random.random() > 0.5: 
+        return ('const', np.random.rand()) 
+    else: 
+        op = random.choice(operations) 
+        if op in ['+', '-', '*']: 
+            return (op, create_random_tree(depth-1), create_random_tree(depth-1)) 
+        else: 
+            return (op, create_random_tree(depth-1)) 
+ 
