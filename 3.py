@@ -27,4 +27,20 @@ def create_random_tree(depth=3):
             return (op, create_random_tree(depth-1), create_random_tree(depth-1)) 
         else: 
             return (op, create_random_tree(depth-1)) 
+
+def tree_to_function(tree, X): 
+    if tree[0] == 'const': 
+        return tree[1] 
+    elif tree[0] == '+': 
+        return tree_to_function(tree[1], X) + tree_to_function(tree[2], X) 
+    elif tree[0] == '-': 
+        return tree_to_function(tree[1], X) - tree_to_function(tree[2], X) 
+    elif tree[0] == '*': 
+        return tree_to_function(tree[1], X) * tree_to_function(tree[2], X) 
+    elif tree[0] == 'mean': 
+        return np.mean(tree_to_function(tree[1], X)) 
+    elif tree[0] == 'max': 
+        return np.max(tree_to_function(tree[1], X)) 
+    elif tree[0] == 'min': 
+        return np.min(tree_to_function(tree[1], X))
  
