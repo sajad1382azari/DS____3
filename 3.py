@@ -99,5 +99,20 @@ class GeneticAlgorithm:
             fitness_scores = [self.fitness_function(ind, x_train, y_train) for ind in self.population] 
             print(f'Generation {generation + 1}: Best Fitness = {min(fitness_scores)}') 
 
+    def predict(self, X): 
+        best_individual = min(self.population, key=lambda ind: self.fitness_function(ind, x_train, y_train)) 
+        return evaluate_tree(best_individual, X) 
+
+population_size = 50 
+n_generations = 50 
+
+mutation_rate = 0.1 
+
+ga = GeneticAlgorithm(population_size, n_generations, mutation_rate) 
+ga.evolve(x_train, y_train) 
+y_pred = ga.predict(x_test) 
+accuracy = np.mean(np.argmax(y_pred, axis=1) == np.argmax(y_test, axis=1)) 
+print(f'Test Accuracy: {accuracy * 100:.2f}%') 
+
 
  
