@@ -114,5 +114,21 @@ y_pred = ga.predict(x_test)
 accuracy = np.mean(np.argmax(y_pred, axis=1) == np.argmax(y_test, axis=1)) 
 print(f'Test Accuracy: {accuracy * 100:.2f}%') 
 
+def read_input_file(filename): 
+    with open(filename, 'r') as file: 
+        images = [list(map(float, line.strip().split())) for line in file] 
+    return np.array(images) 
+
+def write_output_file(filename, results): 
+    with open(filename, 'w') as file: 
+        for result in results: 
+            file.write(f'{result}\n') 
+
+input_file = '/content/input.txt' 
+output_file = 'output.txt' 
+input_images = read_input_file(input_file) 
+predictions = ga.predict(input_images) 
+write_output_file(output_file, np.argmax(predictions, axis=1))
+
 
  
