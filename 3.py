@@ -86,4 +86,18 @@ class GeneticAlgorithm:
         else:
             return individual
 
+    def evolve(self, X, y): 
+        for generation in range(self.n_generations): 
+            selected_individuals = self.selection() 
+            next_population = [] 
+            while len(next_population) < self.population_size: 
+                parent1, parent2 = random.sample(selected_individuals, 2) 
+                offspring = self.crossover(parent1, parent2) 
+                offspring = self.mutate(offspring) 
+                next_population.append(offspring) 
+            self.population = next_population 
+            fitness_scores = [self.fitness_function(ind, x_train, y_train) for ind in self.population] 
+            print(f'Generation {generation + 1}: Best Fitness = {min(fitness_scores)}') 
+
+
  
