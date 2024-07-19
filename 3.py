@@ -43,4 +43,15 @@ def tree_to_function(tree, X):
         return np.max(tree_to_function(tree[1], X)) 
     elif tree[0] == 'min': 
         return np.min(tree_to_function(tree[1], X))
+
+def softmax(logits):
+    exp_logits = np.exp(logits)
+    return exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
+
+def evaluate_tree(tree, X):
+    logits = np.zeros((X.shape[0], 10))
+    for i in range(10):
+        logits[:, i] = tree_to_function(tree, X)
+    return softmax(logits)
+
  
